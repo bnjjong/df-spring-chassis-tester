@@ -1,0 +1,3 @@
+[submodule "gradle-chassis"]
+	path = gradle-chassis
+	url = git@github.com:bnjjong/df-spring-chassis-gradle.git
