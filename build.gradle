@@ -1,19 +1,31 @@
-plugins {
-    id 'java'
+buildscript {
+    apply from: "${rootDir}/gradle-chassis/deploy/properties.gradle"
+    apply from: "${rootDir}/gradle-chassis/deploy/buildscript.gradle"
 }
 
-group = 'io.df.henry'
-version = '1.0-SNAPSHOT'
+apply from: "${rootDir}/gradle-chassis/deploy/default.gradle"
 
-repositories {
-    mavenCentral()
+ext {
+    localVersions = []
 }
 
-dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-}
+configure(subprojects.findAll { it.name != "spring-chassis-bom" }) {
+    apply from: "${rootDir}/gradle-chassis/deploy/dependencies.gradle", to: subprojects
+    apply from: "${rootDir}/gradle-chassis/deploy/java.gradle", to: subprojects
+    apply from: "${rootDir}/gradle-chassis/deploy/dependency-management-for-spring.gradle", to: subprojects
 
-test {
-    useJUnitPlatform()
+    dependencyManagement {
+        imports {
+            mavenBom "software.amazon.awssdk:bom:2.20.92"
+        }
+
+//        dependencies {
+//            dependency "kr.co.kcd:geoip:0.1.0"
+//        }
+    }
+
+    dependencies {
+        annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+        compileOnly "com.google.code.findbugs:jsr305"
+    }
 }
